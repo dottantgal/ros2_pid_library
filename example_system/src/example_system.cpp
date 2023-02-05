@@ -1,6 +1,7 @@
  /**
  *  @file     example_system.cpp
- *  @brief    An example system where to apply the PID control library 
+ *  @brief    An example system where to apply the PID control library
+ *            based on Andrew J Zelenak plant example
  *
  *  @author   Antonio Mauro Galiano
  *  @details  https://www.linkedin.com/in/antoniomaurogaliano/
@@ -29,8 +30,6 @@ public:
       
       actualStatePub_->publish(plantState_);
     }
-  
-  
   std_msgs::msg::Float32 plantState_;
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr actualStatePub_;
   rclcpp::Subscription<std_msgs::msg::Float32>::SharedPtr controlValueSub_;
@@ -44,7 +43,7 @@ private:
   float deltaT_ = 0.01;
 
   // Initialize 1st-order (e.g temp controller) process variables
-  float tempRate_ = 0.0;  // rate of temp change
+  float tempRate_ = 0.0;      // rate of temp change
 
   // Initialize 2nd-order (e.g. servo-motor with load) process variables
   float speed_ = 0.0;         // meters/sec
@@ -56,6 +55,7 @@ private:
   float kBackemf_ = 0.0;      // Volts of back-emf per meter/sec of speed
   float decelForce_;          // decelerating force
   float controlEffort_;
+
   void TopicCallback(const std_msgs::msg::Float32::SharedPtr msg);
 };
 

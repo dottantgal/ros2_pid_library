@@ -15,17 +15,18 @@
 #include "std_msgs/msg/string.hpp"
 #include "std_msgs/msg/float32.hpp"
 #include "rcl_interfaces/msg/set_parameters_result.hpp"
-
 #include <chrono>
 
+
 using namespace std::chrono_literals;
+
 
 class PidLibrary : public rclcpp::Node
 {
 public:
   PidLibrary();
   ~PidLibrary();
-  float PerformPid();
+  void UsePidLibrary();
 
 protected:
   rclcpp::Publisher<std_msgs::msg::Float32>::SharedPtr controlValuePub_;
@@ -73,9 +74,9 @@ protected:
   void DeclareParams();
   void GetParams();
   void PrintParams();
+  void PerformPid();
   bool ValidateParams();
   float AlphaFactorCalc(float freq);
-
 };
 
 #endif

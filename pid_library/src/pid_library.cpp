@@ -1,13 +1,16 @@
  /**
  *  @file     pid_library.cpp
- *  @brief    ROS2 library to apply a PID control to a system 
+ *  @brief    ROS2 library to apply a PID control to a system
+ *            based on Brett Beauregard Arduino PID library
  *
  *  @author   Antonio Mauro Galiano
  *  @details  https://www.linkedin.com/in/antoniomaurogaliano/
  *
  */
 
+
 #include "pid_library/pid_library.h"
+
 
 PidLibrary::PidLibrary() : Node("ros2_pid_library")
 {
@@ -34,10 +37,12 @@ PidLibrary::PidLibrary() : Node("ros2_pid_library")
       this, std::placeholders::_1));  
 }
 
+
 PidLibrary::~PidLibrary()
 {
   RCLCPP_INFO_STREAM(this->get_logger(), "PID library killed");
 }
+
 
 void PidLibrary::DeclareParams()
 {
@@ -58,7 +63,6 @@ void PidLibrary::DeclareParams()
   this->declare_parameter<std::string>("control_value_topic", "/control_value_topic");
   this->declare_parameter<std::string>("actual_state_topic", "/actual_state_topic");
   this->declare_parameter<std::string>("set_point_topic", "/set_point_topic");
-
 }
 
 
@@ -103,6 +107,7 @@ void PidLibrary::PrintParams()
   RCLCPP_INFO_STREAM(this->get_logger(),"actual_state_topic = " << actualStateTopic_);
   RCLCPP_INFO_STREAM(this->get_logger(),"set_point_topic = " << setPointTopic_);
 }
+
 
 bool PidLibrary::ValidateParams()
 {
@@ -214,17 +219,20 @@ rcl_interfaces::msg::SetParametersResult PidLibrary::ParametersCallback(
   return result;
 }
 
+
 void PidLibrary::ActualStateCallback(const std_msgs::msg::Float32::SharedPtr actualStateMsg)
 {
   actualStateValue_ = actualStateMsg->data;
   isTheSistemChanged_ = true;
 }
 
+
 void PidLibrary::SetPointCallback(const std_msgs::msg::Float32::SharedPtr setPointMsg)
 {
   setPointValue_ = setPointMsg->data;
   isTheSistemChanged_ = true;
 }
+
 
 float PidLibrary::AlphaFactorCalc(float freq)
 {
@@ -235,7 +243,13 @@ float PidLibrary::AlphaFactorCalc(float freq)
 }
 
 
-float PidLibrary::PerformPid()
+void PidLibrary::UsePidLibrary()
+{
+  PerformPid();
+}
+
+
+void PidLibrary::PerformPid()
 {
   if (pidEnabled_)
   {
@@ -248,13 +262,13 @@ float PidLibrary::PerformPid()
         if (0 == deltaTime_.seconds())
         {
           RCLCPP_ERROR(this->get_logger(), "Delta Time is 0, skipping this loop.");
-          return 0;
+          return;
         }
       }
       else
       {
         previousTime_ = this->get_clock()->now();
-        return 0;
+        return;
       }
 
       float error = setPointValue_ - actualStateValue_;
@@ -314,5 +328,4 @@ float PidLibrary::PerformPid()
     }
     isTheSistemChanged_ = false; 
   }
-  return 0;
 }
