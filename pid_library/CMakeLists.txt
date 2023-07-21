@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_library(pid_library src/pid_library.cpp)
 target_link_libraries(pid_library ${rclcpp_LIBRARIES})
@@ -17,7 +18,7 @@ target_include_directories(pid_library PUBLIC
   ${rclcpp_INCLUDE_DIRS}
 )
 
-ament_target_dependencies(pid_library rclcpp)
+ament_target_dependencies(pid_library rclcpp std_msgs)
 ament_export_dependencies(rclcpp)
 ament_export_targets(export_pid_library HAS_LIBRARY_TARGET)
 
